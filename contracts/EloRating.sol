@@ -2,9 +2,9 @@
 
 pragma solidity ^0.8.7;
 
-import "./MatchMaking.sol";
+import "./RatingSystem.sol";
 
-contract EloRating is MatchMaking {
+contract EloRating is RatingSystem {
     uint256 public constant VICTORY = 10000;
     uint256 public constant DRAW = VICTORY / 2;
     // K Factor for Elo Rating
@@ -14,7 +14,7 @@ contract EloRating is MatchMaking {
     event EloUpdate(address indexed player, uint256 elo);
     mapping(address => PlayerRating) playerElo;
 
-    constructor(address addr) MatchMaking(addr) {}
+    constructor(address addr) RatingSystem(addr) {}
 
     struct PlayerRating {
         uint256 elo;
@@ -40,8 +40,11 @@ contract EloRating is MatchMaking {
             matches[hash].state == MatchState.RUNNING,
             "match isn't running"
         );
-        uint256 ratingPlayer1 = getPlayerRating(m.player1);
-        uint256 ratingPlayer2 = getPlayerRating(m.player2);
+        // We save before the update to evict wrong calculation
+        uint256 ratingA = getPlayerRating(m.player1);
+        uint256 ratingB = getPlayerRating(m.player2);
+
+        // Check for players score
         uint256 scorePlayer1 = 0;
         uint256 scorePlayer2 = 0;
         if (result == MatchResult.PLAYER1_WIN) {
@@ -52,8 +55,19 @@ contract EloRating is MatchMaking {
             scorePlayer1 = DRAW;
             scorePlayer2 = DRAW;
         }
-        calculateElo(m.player1, ratingPlayer2, scorePlayer1);
-        calculateElo(m.player2, ratingPlayer1, scorePlayer2);
+
+        uint256 qA = 10**(ratingA / 400);
+        uint256 qB = 10**(ratingB / 400);
+
+        // Calculate the expected score for player 1
+        uint256 expectedScore = (qA / (qA + qB)) * INVERSE_BASIS_POINT;
+        calculateElo(m.player1, expectedScore, scorePlayer1);
+
+        // Calculate the expected score for player 2
+        expectedScore = (qB / (qA + qB)) * INVERSE_BASIS_POINT;
+        calculateElo(m.player2, expectedScore, scorePlayer2);
+
+        // Set the match to finished
         matches[hash].state = MatchState.FINISHED;
     }
 
@@ -62,23 +76,22 @@ contract EloRating is MatchMaking {
         WIP: It needs some testing how uint handles the decimal part of the formula
     */
     function calculateElo(
-        address playerA,
-        uint256 ratingB,
+        address player,
+        uint256 expectedScore,
         uint256 scoredPoints
     ) internal {
-        uint256 ratingA = getPlayerRating(playerA);
+        uint256 ratingA = getPlayerRating(player);
 
-        uint256 expectedScore = (1 / (1 + 10**((ratingB - ratingA) / 400))) *
-            INVERSE_BASIS_POINT;
-        uint256 newElo = ratingA + kFactor * (scoredPoints - expectedScore);
-        updatePlayerRating(playerA, newElo);
+        uint256 newElo = uint256(
+            int256(ratingA) +
+                ((int256(kFactor) *
+                    (int256(scoredPoints) - int256(expectedScore))) /
+                    int256(INVERSE_BASIS_POINT))
+        );
+        updatePlayerRating(player, newElo);
     }
 
-    /**
-        Z 
-    
-     */
-    function confirmMatch(
+    function createMatch(
         Match memory m,
         Sig memory p1sig,
         Sig memory p2sig

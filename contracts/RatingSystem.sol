@@ -2,8 +2,10 @@
 pragma solidity >=0.4.22 <0.9.0;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "../interfaces/IRating.sol";
+import "../interfaces/IPeriodic.sol";
 
-abstract contract MatchMaking is Ownable {
+abstract contract RatingSystem is Ownable, IRating, IPeriodic {
     /* 2 decimal plates for percentage */
     uint256 public constant INVERSE_BASIS_POINT = 10000;
 
@@ -27,31 +29,8 @@ abstract contract MatchMaking is Ownable {
         uint256 timestamp
     );
 
-    /**
-        Match against 2 players in a timestamp
-        WIP Need to check if nonce is needed
-    */
-
-    struct Match {
-        address player1;
-        address player2;
-        uint256 timestamp;
-    }
-
     struct RunningMatch {
         MatchState state;
-    }
-
-    struct Sig {
-        uint8 v;
-        bytes32 r;
-        bytes32 s;
-    }
-
-    enum MatchResult {
-        DRAW,
-        PLAYER1_WIN,
-        PLAYER2_WIN
     }
 
     enum MatchState {
@@ -69,14 +48,19 @@ abstract contract MatchMaking is Ownable {
         _;
     }
 
+    function alterGameContract(address newGameAddress) public onlyOwner {
+        _gameContract = newGameAddress;
+    }
+
     function updateEvaluationPeriod(uint256 newEvaluationPeriod)
         public
+        override
         onlyOwner
     {
         evaluationPeriod = newEvaluationPeriod;
     }
 
-    function nextEvaluationPeriod() public {
+    function nextEvaluationPeriod() public override {
         require(evaluationPeriod > 0, "evaluation period isn't set");
         require(block.timestamp > currentEvaluationPeriod, "it isn't time yet");
         currentEvaluationPeriod = block.timestamp + evaluationPeriod;
@@ -89,22 +73,19 @@ abstract contract MatchMaking is Ownable {
 
     // function evaluateMatches() public virtual;
 
-    function confirmMatch(
+    // function alterRanking() public onlyGameContract {}
+
+    function createMatch(
         Match memory m,
         Sig memory p1sig,
         Sig memory p2sig
-    ) public virtual;
+    ) public virtual override;
 
     function writeMatchResult(Match memory m, MatchResult result)
         public
+        override
         onlyGameContract
     {}
-
-    function alterRanking() public onlyGameContract {}
-
-    function alterGameContract(address newGameAddress) public onlyOwner {
-        _gameContract = newGameAddress;
-    }
 
     function requireValidMatch(
         Match memory m,

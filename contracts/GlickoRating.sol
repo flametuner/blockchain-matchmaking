@@ -2,9 +2,9 @@
 
 pragma solidity ^0.8.7;
 
-import "./MatchMaking.sol";
+import "./RatingSystem.sol";
 
-contract GlickoRating is MatchMaking {
+contract GlickoRating is RatingSystem {
     event NewMatch(address indexed p1, address indexed p2);
 
     mapping(address => PlayerRating) glickoRating;
@@ -17,7 +17,7 @@ contract GlickoRating is MatchMaking {
 
     address[] private inQueue;
 
-    constructor(address addr) MatchMaking(addr) {}
+    constructor(address addr) RatingSystem(addr) {}
 
     function writeMatchResult(Match memory m, MatchResult result)
         public
@@ -36,11 +36,9 @@ contract GlickoRating is MatchMaking {
     //     }
     // }
 
-    function confirmMatch(
+    function createMatch(
         Match memory m,
         Sig memory p1sig,
         Sig memory p2sig
     ) public override {}
-
-    function alterRanking() public override onlyOwner {}
 }
