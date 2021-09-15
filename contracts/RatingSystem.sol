@@ -19,18 +19,19 @@ abstract contract RatingSystem is Ownable, IRating, IPeriodic {
     event PeriodCompleted(uint256 newEvaluationPeriod);
 
     event MatchCreate(
-        address indexed p1,
-        address indexed p2,
+        address indexed pA,
+        address indexed pB,
         uint256 timestamp
     );
     event MatchFinish(
-        address indexed p1,
-        address indexed p2,
+        address indexed pA,
+        address indexed pB,
         uint256 timestamp
     );
 
     struct RunningMatch {
         MatchState state;
+        address winner;
     }
 
     enum MatchState {
@@ -77,8 +78,8 @@ abstract contract RatingSystem is Ownable, IRating, IPeriodic {
 
     function createMatch(
         Match memory m,
-        Sig memory p1sig,
-        Sig memory p2sig
+        Sig memory pAsig,
+        Sig memory pBsig
     ) public virtual override;
 
     function writeMatchResult(Match memory m, MatchResult result)
@@ -89,11 +90,11 @@ abstract contract RatingSystem is Ownable, IRating, IPeriodic {
 
     function requireValidMatch(
         Match memory m,
-        Sig memory sigp1,
-        Sig memory sigp2
+        Sig memory sigpA,
+        Sig memory sigpB
     ) internal pure returns (bytes32 hash) {
         require(
-            validateMatch(m, hash = hashToSignMatch(m), sigp1, sigp2),
+            validateMatch(m, hash = hashToSignMatch(m), sigpA, sigpB),
             "invalid match"
         );
     }
@@ -101,12 +102,12 @@ abstract contract RatingSystem is Ownable, IRating, IPeriodic {
     function validateMatch(
         Match memory m,
         bytes32 hash,
-        Sig memory sigp1,
-        Sig memory sigp2
+        Sig memory sigpA,
+        Sig memory sigpB
     ) internal pure returns (bool) {
         return
-            ecrecover(hash, sigp1.v, sigp1.r, sigp1.s) == m.player1 &&
-            ecrecover(hash, sigp2.v, sigp2.r, sigp2.s) == m.player2;
+            ecrecover(hash, sigpA.v, sigpA.r, sigpA.s) == m.playerA.addr &&
+            ecrecover(hash, sigpB.v, sigpB.r, sigpB.s) == m.playerB.addr;
     }
 
     function hashToSignMatch(Match memory m) internal pure returns (bytes32) {
@@ -114,7 +115,9 @@ abstract contract RatingSystem is Ownable, IRating, IPeriodic {
     }
 
     function hashMatch(Match memory m) internal pure returns (bytes32 hash) {
-        hash = keccak256(abi.encodePacked(m.player1, m.player2, m.timestamp));
+        hash = keccak256(
+            abi.encodePacked(m.playerA.addr, m.playerB.addr, m.timestamp)
+        );
     }
 
     function hashToSign(bytes32 hash) internal pure returns (bytes32) {

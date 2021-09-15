@@ -4,8 +4,8 @@ pragma solidity >=0.4.22 <0.9.0;
 interface IRating {
     enum MatchResult {
         DRAW,
-        PLAYER1_WIN,
-        PLAYER2_WIN
+        PLAYER_A_WIN,
+        PLAYER_B_WIN
     }
 
     /**
@@ -13,9 +13,14 @@ interface IRating {
         WIP Need to check if nonce is needed
     */
     struct Match {
-        address player1;
-        address player2;
+        Player playerA;
+        Player playerB;
         uint256 timestamp;
+    }
+
+    struct Player {
+        address addr;
+        uint256 nonce;
     }
 
     struct Sig {
@@ -26,8 +31,8 @@ interface IRating {
 
     function createMatch(
         Match memory m,
-        Sig memory p1sig,
-        Sig memory p2sig
+        Sig memory pAsig,
+        Sig memory pBsig
     ) external;
 
     function writeMatchResult(Match memory m, MatchResult result) external;

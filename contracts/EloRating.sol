@@ -5,7 +5,7 @@ pragma solidity ^0.8.7;
 import "./RatingSystem.sol";
 
 contract EloRating is RatingSystem {
-    uint256 public constant VICTORY = 10000;
+    uint256 public constant VICTORY = INVERSE_BASIS_POINT;
     uint256 public constant DRAW = VICTORY / 2;
     // K Factor for Elo Rating
     uint256 public kFactor;
@@ -20,6 +20,7 @@ contract EloRating is RatingSystem {
         uint256 elo;
         uint256 nonce;
         uint256 lastUpdatedRating;
+        int256 nextEloUpdate;
     }
 
     /**
@@ -41,34 +42,38 @@ contract EloRating is RatingSystem {
             "match isn't running"
         );
         // We save before the update to evict wrong calculation
-        uint256 ratingA = getPlayerRating(m.player1);
-        uint256 ratingB = getPlayerRating(m.player2);
+        uint256 ratingA = getPlayerRating(m.playerA.addr);
+        uint256 ratingB = getPlayerRating(m.playerB.addr);
 
         // Check for players score
-        uint256 scorePlayer1 = 0;
-        uint256 scorePlayer2 = 0;
-        if (result == MatchResult.PLAYER1_WIN) {
-            scorePlayer1 = VICTORY;
-        } else if (result == MatchResult.PLAYER2_WIN) {
-            scorePlayer2 = VICTORY;
+        uint256 scoreplayerA = 0;
+        uint256 scoreplayerB = 0;
+        address winner;
+        if (result == MatchResult.PLAYER_A_WIN) {
+            scoreplayerA = VICTORY;
+            winner = m.playerA.addr;
+        } else if (result == MatchResult.PLAYER_B_WIN) {
+            scoreplayerB = VICTORY;
+            winner = m.playerB.addr;
         } else {
-            scorePlayer1 = DRAW;
-            scorePlayer2 = DRAW;
+            scoreplayerA = DRAW;
+            scoreplayerB = DRAW;
         }
 
         uint256 qA = 10**(ratingA / 400);
         uint256 qB = 10**(ratingB / 400);
 
+        // Set the match to finished
+        matches[hash].state = MatchState.FINISHED;
+        matches[hash].winner = winner;
+
         // Calculate the expected score for player 1
         uint256 expectedScore = (qA / (qA + qB)) * INVERSE_BASIS_POINT;
-        calculateElo(m.player1, expectedScore, scorePlayer1);
+        calculateElo(m.playerA.addr, expectedScore, scoreplayerA);
 
         // Calculate the expected score for player 2
         expectedScore = (qB / (qA + qB)) * INVERSE_BASIS_POINT;
-        calculateElo(m.player2, expectedScore, scorePlayer2);
-
-        // Set the match to finished
-        matches[hash].state = MatchState.FINISHED;
+        calculateElo(m.playerB.addr, expectedScore, scoreplayerB);
     }
 
     /**
@@ -80,37 +85,50 @@ contract EloRating is RatingSystem {
         uint256 expectedScore,
         uint256 scoredPoints
     ) internal {
-        uint256 ratingA = getPlayerRating(player);
-
-        uint256 newElo = uint256(
-            int256(ratingA) +
-                ((int256(kFactor) *
-                    (int256(scoredPoints) - int256(expectedScore))) /
-                    int256(INVERSE_BASIS_POINT))
-        );
-        updatePlayerRating(player, newElo);
+        int256 eloChange = ((int256(kFactor) *
+            (int256(scoredPoints) - int256(expectedScore))) /
+            int256(INVERSE_BASIS_POINT));
+        updatePlayerRating(player, eloChange);
     }
 
     function createMatch(
         Match memory m,
-        Sig memory p1sig,
-        Sig memory p2sig
+        Sig memory pAsig,
+        Sig memory pBsig
     ) public override {
-        bytes32 hash = requireValidMatch(m, p1sig, p2sig);
+        bytes32 hash = requireValidMatch(m, pAsig, pBsig);
 
         matches[hash].state = MatchState.RUNNING;
         // Update nonces WIP
-        playerElo[m.player1].nonce++;
-        playerElo[m.player2].nonce++;
+        require(
+            m.playerA.nonce == playerElo[m.playerA.addr].nonce++,
+            "pB nonce doesn't match"
+        );
+        require(
+            m.playerB.nonce == playerElo[m.playerB.addr].nonce++,
+            "pB nonce doesn't match"
+        );
 
         // Emit events
-        emit MatchCreate(m.player1, m.player2, m.timestamp);
+        emit MatchCreate(m.playerA.addr, m.playerB.addr, m.timestamp);
     }
 
-    function updatePlayerRating(address p, uint256 newEloRating) internal {
-        playerElo[p].elo = newEloRating;
-        playerElo[p].lastUpdatedRating = block.timestamp;
-        emit EloUpdate(p, newEloRating);
+    function updatePlayerRating(address p, int256 newEloRating) internal {
+        PlayerRating storage rating = playerElo[p];
+        int eloUpdate = newEloRating;
+        if (evaluationPeriod > 0) {
+            if (rating.lastUpdatedRating + evaluationPeriod > block.timestamp) {
+                rating.nextEloUpdate += eloUpdate;
+                return;
+            } else {
+                eloUpdate += rating.nextEloUpdate;
+                rating.nextEloUpdate = 0;
+            }
+        }
+
+        rating.elo = uint256(int256(rating.elo) + eloUpdate);
+        rating.lastUpdatedRating = block.timestamp;
+        emit EloUpdate(p, rating.elo);
     }
 
     function getPlayerRating(address p) private returns (uint256 elo) {

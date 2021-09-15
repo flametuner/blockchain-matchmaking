@@ -5,8 +5,7 @@ pragma solidity ^0.8.7;
 import "./RatingSystem.sol";
 
 contract GlickoRating is RatingSystem {
-    event NewMatch(address indexed p1, address indexed p2);
-
+    
     mapping(address => PlayerRating) glickoRating;
 
     struct PlayerRating {
@@ -38,7 +37,7 @@ contract GlickoRating is RatingSystem {
 
     function createMatch(
         Match memory m,
-        Sig memory p1sig,
-        Sig memory p2sig
+        Sig memory pAsig,
+        Sig memory pBsig
     ) public override {}
 }
