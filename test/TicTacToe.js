@@ -2,7 +2,7 @@ const truffleAssert = require('truffle-assertions');
 const TicTacToe = artifacts.require("TicTacToe");
 const EloRating = artifacts.require("EloRating");
 const signHelper = require("./helpers/signatureHelper");
-
+const GameLibrary = artifacts.require("GameLibrary");
 
 contract("TicTacToe", async (accounts) => {
     context("Normal flow", function () {

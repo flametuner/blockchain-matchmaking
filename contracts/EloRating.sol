@@ -35,7 +35,7 @@ contract EloRating is RatingSystem {
         GameLibrary.Match memory m,
         GameLibrary.MatchResult result
     ) public override onlyGameContract {
-        bytes32 hash = hashToSignMatch(m);
+        bytes32 hash = GameLibrary.hashToSignMatch(m);
         require(
             matches[hash].state == MatchState.RUNNING,
             "match isn't running"
@@ -95,7 +95,7 @@ contract EloRating is RatingSystem {
         GameLibrary.Sig memory pAsig,
         GameLibrary.Sig memory pBsig
     ) public override returns (bytes32 hash) {
-        hash = requireValidMatch(m, pAsig, pBsig);
+        hash = GameLibrary.requireValidMatch(m, pAsig, pBsig);
 
         matches[hash].state = MatchState.RUNNING;
         // Update nonces WIP

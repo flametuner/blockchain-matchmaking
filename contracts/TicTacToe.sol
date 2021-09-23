@@ -3,9 +3,6 @@
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./RatingSystem.sol";
 
-
-
-
 pragma solidity ^0.8.7;
 
 // TicTacToe is a solidity implementation of the tic tac toe game.
