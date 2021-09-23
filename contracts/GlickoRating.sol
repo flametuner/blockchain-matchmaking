@@ -5,7 +5,6 @@ pragma solidity ^0.8.7;
 import "./RatingSystem.sol";
 
 contract GlickoRating is RatingSystem {
-    
     mapping(address => PlayerRating) glickoRating;
 
     struct PlayerRating {
@@ -18,11 +17,10 @@ contract GlickoRating is RatingSystem {
 
     constructor(address addr) RatingSystem(addr) {}
 
-    function writeMatchResult(Match memory m, MatchResult result)
-        public
-        override
-        onlyGameContract
-    {}
+    function writeMatchResult(
+        GameLibrary.Match memory m,
+        GameLibrary.MatchResult result
+    ) public override onlyGameContract {}
 
     // function joinQueue() public override {}
 
@@ -36,8 +34,8 @@ contract GlickoRating is RatingSystem {
     // }
 
     function createMatch(
-        Match memory m,
-        Sig memory pAsig,
-        Sig memory pBsig
-    ) public override {}
+        GameLibrary.Match memory m,
+        GameLibrary.Sig memory pAsig,
+        GameLibrary.Sig memory pBsig
+    ) public override returns (bytes32 hash) {}
 }

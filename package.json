@@ -7,12 +7,15 @@
     "test": "test"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "truffle build",
+    "test": "truffle test",
+    "dev": "truffle develop"
   },
-  "author": "",
+  "author": "Gustavo and Ricardo",
   "license": "ISC",
   "dependencies": {
     "@openzeppelin/contracts": "^4.3.1",
-    "solc": "^0.8.7-fixed"
+    "solc": "^0.8.7-fixed",
+    "truffle-assertions": "^0.9.2"
   }
 }

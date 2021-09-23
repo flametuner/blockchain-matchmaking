@@ -31,11 +31,10 @@ contract EloRating is RatingSystem {
         emit KFactorUpdate(newKFactor);
     }
 
-    function writeMatchResult(Match memory m, MatchResult result)
-        public
-        override
-        onlyGameContract
-    {
+    function writeMatchResult(
+        GameLibrary.Match memory m,
+        GameLibrary.MatchResult result
+    ) public override onlyGameContract {
         bytes32 hash = hashToSignMatch(m);
         require(
             matches[hash].state == MatchState.RUNNING,
@@ -49,10 +48,10 @@ contract EloRating is RatingSystem {
         uint256 scoreplayerA = 0;
         uint256 scoreplayerB = 0;
         address winner;
-        if (result == MatchResult.PLAYER_A_WIN) {
+        if (result == GameLibrary.MatchResult.PLAYER_A_WIN) {
             scoreplayerA = VICTORY;
             winner = m.playerA.addr;
-        } else if (result == MatchResult.PLAYER_B_WIN) {
+        } else if (result == GameLibrary.MatchResult.PLAYER_B_WIN) {
             scoreplayerB = VICTORY;
             winner = m.playerB.addr;
         } else {
@@ -92,11 +91,11 @@ contract EloRating is RatingSystem {
     }
 
     function createMatch(
-        Match memory m,
-        Sig memory pAsig,
-        Sig memory pBsig
-    ) public override {
-        bytes32 hash = requireValidMatch(m, pAsig, pBsig);
+        GameLibrary.Match memory m,
+        GameLibrary.Sig memory pAsig,
+        GameLibrary.Sig memory pBsig
+    ) public override returns (bytes32 hash) {
+        hash = requireValidMatch(m, pAsig, pBsig);
 
         matches[hash].state = MatchState.RUNNING;
         // Update nonces WIP
@@ -115,7 +114,7 @@ contract EloRating is RatingSystem {
 
     function updatePlayerRating(address p, int256 newEloRating) internal {
         PlayerRating storage rating = playerElo[p];
-        int eloUpdate = newEloRating;
+        int256 eloUpdate = newEloRating;
         if (evaluationPeriod > 0) {
             if (rating.lastUpdatedRating + evaluationPeriod > block.timestamp) {
                 rating.nextEloUpdate += eloUpdate;
@@ -131,7 +130,7 @@ contract EloRating is RatingSystem {
         emit EloUpdate(p, rating.elo);
     }
 
-    function getPlayerRating(address p) private returns (uint256 elo) {
+    function getPlayerRating(address p) private view returns (uint256 elo) {
         elo = playerElo[p].elo;
         if (elo == 0) elo = 1500;
     }

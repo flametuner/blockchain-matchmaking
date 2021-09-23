@@ -6,6 +6,7 @@ import "../interfaces/IRating.sol";
 import "../interfaces/IPeriodic.sol";
 
 abstract contract RatingSystem is Ownable, IRating, IPeriodic {
+    
     /* 2 decimal plates for percentage */
     uint256 public constant INVERSE_BASIS_POINT = 10000;
 
@@ -77,21 +78,22 @@ abstract contract RatingSystem is Ownable, IRating, IPeriodic {
     // function alterRanking() public onlyGameContract {}
 
     function createMatch(
-        Match memory m,
-        Sig memory pAsig,
-        Sig memory pBsig
-    ) public virtual override;
+        GameLibrary.Match memory m,
+        GameLibrary.Sig memory pAsig,
+        GameLibrary.Sig memory pBsig
+    ) public virtual override returns (bytes32 hash);
 
-    function writeMatchResult(Match memory m, MatchResult result)
+    function writeMatchResult(GameLibrary.Match memory m, GameLibrary.MatchResult result)
         public
         override
+        virtual
         onlyGameContract
     {}
 
     function requireValidMatch(
-        Match memory m,
-        Sig memory sigpA,
-        Sig memory sigpB
+        GameLibrary.Match memory m,
+        GameLibrary.Sig memory sigpA,
+        GameLibrary.Sig memory sigpB
     ) internal pure returns (bytes32 hash) {
         require(
             validateMatch(m, hash = hashToSignMatch(m), sigpA, sigpB),
@@ -100,21 +102,21 @@ abstract contract RatingSystem is Ownable, IRating, IPeriodic {
     }
 
     function validateMatch(
-        Match memory m,
+        GameLibrary.Match memory m,
         bytes32 hash,
-        Sig memory sigpA,
-        Sig memory sigpB
+        GameLibrary.Sig memory sigpA,
+        GameLibrary.Sig memory sigpB
     ) internal pure returns (bool) {
         return
             ecrecover(hash, sigpA.v, sigpA.r, sigpA.s) == m.playerA.addr &&
             ecrecover(hash, sigpB.v, sigpB.r, sigpB.s) == m.playerB.addr;
     }
 
-    function hashToSignMatch(Match memory m) internal pure returns (bytes32) {
+    function hashToSignMatch(GameLibrary.Match memory m) internal pure returns (bytes32) {
         return hashToSign(hashMatch(m));
     }
 
-    function hashMatch(Match memory m) internal pure returns (bytes32 hash) {
+    function hashMatch(GameLibrary.Match memory m) internal pure returns (bytes32 hash) {
         hash = keccak256(
             abi.encodePacked(m.playerA.addr, m.playerB.addr, m.timestamp)
         );
