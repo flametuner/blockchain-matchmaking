@@ -80,6 +80,7 @@ contract TicTacToe is Ownable {
         GameLibrary.Sig memory pAsig,
         GameLibrary.Sig memory pBsig
     ) public returns (bytes32 gameId) {
+        require(address(_system) != address(0), "rating system not defined");
         bytes32 _gameId = _system.createMatch(m, pAsig, pBsig);
         Game memory game;
         game.playerTurn = Players.PlayerA;

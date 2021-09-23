@@ -130,8 +130,12 @@ contract EloRating is RatingSystem {
         emit EloUpdate(p, rating.elo);
     }
 
-    function getPlayerRating(address p) private view returns (uint256 elo) {
+    function getPlayerRating(address p) public view returns (uint256 elo) {
         elo = playerElo[p].elo;
         if (elo == 0) elo = 1500;
+    }
+
+    function getPlayerNonce(address p) public view returns (uint256 nonce) {
+        return playerElo[p].nonce;
     }
 }

@@ -8,7 +8,7 @@
   },
   "scripts": {
     "build": "truffle build",
-    "test": "truffle test",
+    "test": "truffle test --debug",
     "dev": "truffle develop"
   },
   "author": "Gustavo and Ricardo",

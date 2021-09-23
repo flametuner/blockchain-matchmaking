@@ -3,7 +3,7 @@ const TicTacToe = artifacts.require("TicTacToe");
 
 
 
-contract("TicTacToe", async (accounts) => {
+contract("EloRating", async (accounts) => {
     context("Normal flow", function () {
         let gameContract;
 
@@ -11,14 +11,14 @@ contract("TicTacToe", async (accounts) => {
             gameContract = await TicTacToe.deployed();
         });
 
-        it("Should create a new game", async () => {
-            const creator = accounts[0];
-            const tx = await gameContract.newGame({ from: creator });
+        // it("Should create a new game", async () => {
+        //     const creator = accounts[0];
+        //     const tx = await gameContract.newGame({ from: creator });
 
-            truffleAssert.eventEmitted(tx, 'GameCreated', (ev) =>
-                ev.creator === creator
-            );
-        });
+        //     truffleAssert.eventEmitted(tx, 'GameCreated', (ev) =>
+        //         ev.creator === creator
+        //     );
+        // });
         // https://www.trufflesuite.com/docs/truffle/reference/truffle-commands
     });
 })
