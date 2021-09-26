@@ -14,7 +14,7 @@ abstract contract RatingSystem is Ownable, IRating, IPeriodic {
 
     uint256 public currentEvaluationPeriod;
 
-    mapping(bytes32 => RunningMatch) matches;
+    mapping(bytes32 => RunningMatch) public matches;
 
     event PeriodCompleted(uint256 newEvaluationPeriod);
 
