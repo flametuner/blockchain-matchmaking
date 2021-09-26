@@ -21,12 +21,12 @@ abstract contract RatingSystem is Ownable, IRating, IPeriodic {
     event MatchCreate(
         address indexed pA,
         address indexed pB,
-        uint256 timestamp
+        uint256 nonce
     );
     event MatchFinish(
         address indexed pA,
         address indexed pB,
-        uint256 timestamp
+        uint256 nonce
     );
 
     struct RunningMatch {

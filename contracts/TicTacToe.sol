@@ -34,7 +34,7 @@ contract TicTacToe is Ownable {
     struct Game {
         address playerA;
         address playerB;
-        uint256 timestamp;
+        uint256 nonce;
         Winners winner;
         Players playerTurn;
         Players[3][3] board;
@@ -83,7 +83,7 @@ contract TicTacToe is Ownable {
         game.playerTurn = Players.PlayerA;
         game.playerA = m.playerA;
         game.playerB = m.playerB;
-        game.timestamp = m.timestamp;
+        game.nonce = m.nonce;
 
         games[_gameId] = game;
 

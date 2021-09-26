@@ -10,10 +10,8 @@ async function generateSignature(hash, address) {
 function hashMatch(_match) {
     return web3.utils.soliditySha3(
         _match.playerA,
-        _match.nonceA,
         _match.playerB,
-        _match.nonceB,
-        _match.timestamp
+        _match.nonce
     );
 }
 

@@ -10,15 +10,13 @@ library GameLibrary {
     }
 
     /**
-        Match against 2 players in a timestamp
+        Match against 2 players and a nonce that can be a timestamp
         WIP Need to check if nonce is needed
     */
     struct Match {
         address playerA;
-        uint256 nonceA;
         address playerB;
-        uint256 nonceB;
-        uint256 timestamp;
+        uint256 nonce;
     }
 
     // struct Player {
@@ -65,10 +63,8 @@ library GameLibrary {
 
     function validateMatch(
         address pA,
-        uint256 nonceA,
         address pB,
-        uint256 nonceB,
-        uint256 timestamp,
+        uint256 nonce,
         uint8 vA,
         bytes32 rA,
         bytes32 sA,
@@ -78,10 +74,8 @@ library GameLibrary {
     ) public pure returns (bool) {
         GameLibrary.Match memory m = GameLibrary.Match(
             pA,
-            nonceA,
             pB,
-            nonceB,
-            timestamp
+            nonce
         );
         return
             _validateMatch(
@@ -102,12 +96,10 @@ library GameLibrary {
 
     function hashMatch(
         address pA,
-        uint256 nonceA,
         address pB,
-        uint256 nonceB,
-        uint256 timestamp
+        uint256 nonce
     ) public pure returns (bytes32) {
-        return _hashMatch(GameLibrary.Match(pA, nonceA, pB, nonceB, timestamp));
+        return _hashMatch(GameLibrary.Match(pA, pB, nonce));
     }
 
     function _hashMatch(GameLibrary.Match memory m)
@@ -119,10 +111,8 @@ library GameLibrary {
             keccak256(
                 abi.encodePacked(
                     m.playerA,
-                    m.nonceA,
                     m.playerB,
-                    m.nonceB,
-                    m.timestamp
+                    m.nonce
                 )
             );
     }

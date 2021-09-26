@@ -18,7 +18,7 @@ contract EloRating is RatingSystem {
 
     struct PlayerRating {
         uint256 elo;
-        uint256 nonce;
+        // uint256 nonce;
         uint256 lastUpdatedRating;
         int256 nextEloUpdate;
     }
@@ -96,20 +96,11 @@ contract EloRating is RatingSystem {
         GameLibrary.Sig memory pBsig
     ) public override returns (bytes32 hash) {
         hash = GameLibrary._requireValidMatch(m, pAsig, pBsig);
-        require(matches[hash].state == MatchState.NOT_STARTED);
+        require(matches[hash].state == MatchState.NOT_STARTED, "the game has already started");
         matches[hash].state = MatchState.RUNNING;
-        Update nonces WIP
-        require(
-            m.nonceA == playerElo[m.playerA].nonce++,
-            "pB nonce doesn't match"
-        );
-        require(
-            m.nonceB == playerElo[m.playerB].nonce++,
-            "pB nonce doesn't match"
-        );
 
         // Emit events
-        emit MatchCreate(m.playerA, m.playerB, m.timestamp);
+        emit MatchCreate(m.playerA, m.playerB, m.nonce);
     }
 
     function updatePlayerRating(address p, int256 newEloRating) internal {
@@ -135,7 +126,7 @@ contract EloRating is RatingSystem {
         if (elo == 0) elo = 1500;
     }
 
-    function getPlayerNonce(address p) public view returns (uint256 nonce) {
-        return playerElo[p].nonce;
-    }
+    // function getPlayerNonce(address p) public view returns (uint256 nonce) {
+    //     return playerElo[p].nonce;
+    // }
 }

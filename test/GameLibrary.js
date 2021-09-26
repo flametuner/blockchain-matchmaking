@@ -14,10 +14,10 @@ contract('GameLibrary', async (accounts) => {
             const pA = accounts[0];
             const pB = accounts[1];
 
-            const match = generator.generateRandomMatch(pA, pB);
+            const match = generator.generateMatch(pA, pB);
 
             const hash = signHelper.hashMatch(match);
-            const contractHash = (await library.hashMatch(match.playerA, match.nonceA, match.playerB, match.nonceB, match.timestamp)).valueOf();
+            const contractHash = (await library.hashMatch(match.playerA, match.playerB, match.nonce)).valueOf();
 
             assert.equal(hash, contractHash);
         });
@@ -26,7 +26,7 @@ contract('GameLibrary', async (accounts) => {
             const pA = accounts[0];
             const pB = accounts[1];
 
-            const match = generator.generateRandomMatch(pA, pB);
+            const match = generator.generateMatch(pA, pB);
 
             const hash = signHelper.hashMatch(match);
 
@@ -39,7 +39,7 @@ contract('GameLibrary', async (accounts) => {
             const pA = accounts[0];
             const pB = accounts[1];
 
-            const match = generator.generateRandomMatch(pA, pB);
+            const match = generator.generateMatch(pA, pB);
             const hash = signHelper.hashMatch(match);
             const hashToSign = signHelper.hashToSign(hash);
 
@@ -54,7 +54,7 @@ contract('GameLibrary', async (accounts) => {
             assert.equal(sigAddrB, pB);
 
             const valid = (await library.validateMatch(
-                match.playerA, match.nonceA, match.playerB, match.nonceB, match.timestamp,
+                match.playerA, match.playerB, match.nonce,
                 sigpA.v, sigpA.r, sigpA.s,
                 sigpB.v, sigpB.r, sigpB.s,
             )).valueOf();
