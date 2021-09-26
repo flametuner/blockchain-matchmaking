@@ -72,11 +72,7 @@ library GameLibrary {
         bytes32 rB,
         bytes32 sB
     ) public pure returns (bool) {
-        GameLibrary.Match memory m = GameLibrary.Match(
-            pA,
-            pB,
-            nonce
-        );
+        GameLibrary.Match memory m = GameLibrary.Match(pA, pB, nonce);
         return
             _validateMatch(
                 m,
@@ -107,14 +103,7 @@ library GameLibrary {
         pure
         returns (bytes32)
     {
-        return
-            keccak256(
-                abi.encodePacked(
-                    m.playerA,
-                    m.playerB,
-                    m.nonce
-                )
-            );
+        return keccak256(abi.encodePacked(m.playerA, m.playerB, m.nonce));
     }
 
     function hashToSign(bytes32 hash) public pure returns (bytes32) {

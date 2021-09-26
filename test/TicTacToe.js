@@ -17,8 +17,7 @@ contract("TicTacToe", async (accounts) => {
         it("Should create a new game", async () => {
             const pA = accounts[0];
             const pB = accounts[1];
-            // const nonceA = (await eloRating.getPlayerNonce(pA)).valueOf().toString();
-            // const nonceB = (await eloRating.getPlayerNonce(pB)).valueOf().toString();
+            
             const match = generator.generateMatch(pA, pB);
             const hash = signHelper.hashMatch(match);
             const sigpA = await signHelper.generateSignature(hash, pA);
@@ -43,19 +42,57 @@ contract("TicTacToe", async (accounts) => {
 
             const match = generator.generateMatch(pA, pB);
             const hash = signHelper.hashMatch(match);
+            gameId = signHelper.hashToSign(hash);
             const sigpA = await signHelper.generateSignature(hash, pA);
             const sigpB = await signHelper.generateSignature(hash, pB);
-            gameId = await gameContract.newGame.call(match, sigpA, sigpB, { from: pA });
-            console.log(gameId);
+            await gameContract.newGame(match, sigpA, sigpB, { from: pA });
+            // console.log(gameId);
         });
 
         it("Player A should make a move", async () => {
             const pA = accounts[0];
             // const pB = accounts[1];
             const tx = await gameContract.makeMove(gameId, 0, 0, { from: pA });
-            console.log(tx)
+
             truffleAssert.eventEmitted(tx, 'PlayerMadeMove', (ev) =>
                 ev.player === pA
+            );
+        });
+
+        it("Player A should not make a move", async () => {
+            const pA = accounts[0];
+            // const pB = accounts[1];
+            const tx = await gameContract.makeMove.call(gameId, 0, 1, { from: pA });
+
+            assert.equal(tx.reason, "It is not your turn.");
+        });
+        it("Player B should make a move", async () => {
+            // const pA = accounts[0];
+            const pB = accounts[1];
+            const tx = await gameContract.makeMove(gameId, 0, 1, { from: pB });
+
+            truffleAssert.eventEmitted(tx, 'PlayerMadeMove', (ev) =>
+                ev.player === pB
+            );
+        });
+        it("Player should not use existing coords", async () => {
+            const pA = accounts[0];
+            // const pB = accounts[1];
+            const tx = await gameContract.makeMove.call(gameId, 0, 0, { from: pA });
+
+            assert.equal(tx.reason, "There is already a mark at the given coordinates.");
+        });
+        it("Player B should win", async () => {
+            const pA = accounts[0];
+            const pB = accounts[1];
+            await gameContract.makeMove(gameId, 1, 0, { from: pA });
+            await gameContract.makeMove(gameId, 1, 1, { from: pB });
+            await gameContract.makeMove(gameId, 0, 2, { from: pA });
+            const tx = await gameContract.makeMove(gameId, 2, 1, { from: pB });
+
+
+            truffleAssert.eventEmitted(tx, 'GameOver', (ev) =>
+                ev.winner == 2 // PLayer B
             );
         });
     });
