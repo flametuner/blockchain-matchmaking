@@ -35,14 +35,14 @@ contract EloRating is RatingSystem {
         GameLibrary.Match memory m,
         GameLibrary.MatchResult result
     ) public override onlyGameContract {
-        bytes32 hash = GameLibrary.hashToSignMatch(m);
+        bytes32 hash = GameLibrary._hashToSignMatch(m);
         require(
             matches[hash].state == MatchState.RUNNING,
             "match isn't running"
         );
         // We save before the update to evict wrong calculation
-        uint256 ratingA = getPlayerRating(m.playerA.addr);
-        uint256 ratingB = getPlayerRating(m.playerB.addr);
+        uint256 ratingA = getPlayerRating(m.playerA);
+        uint256 ratingB = getPlayerRating(m.playerB);
 
         // Check for players score
         uint256 scoreplayerA = 0;
@@ -50,10 +50,10 @@ contract EloRating is RatingSystem {
         address winner;
         if (result == GameLibrary.MatchResult.PLAYER_A_WIN) {
             scoreplayerA = VICTORY;
-            winner = m.playerA.addr;
+            winner = m.playerA;
         } else if (result == GameLibrary.MatchResult.PLAYER_B_WIN) {
             scoreplayerB = VICTORY;
-            winner = m.playerB.addr;
+            winner = m.playerB;
         } else {
             scoreplayerA = DRAW;
             scoreplayerB = DRAW;
@@ -68,11 +68,11 @@ contract EloRating is RatingSystem {
 
         // Calculate the expected score for player 1
         uint256 expectedScore = (qA / (qA + qB)) * INVERSE_BASIS_POINT;
-        calculateElo(m.playerA.addr, expectedScore, scoreplayerA);
+        calculateElo(m.playerA, expectedScore, scoreplayerA);
 
         // Calculate the expected score for player 2
         expectedScore = (qB / (qA + qB)) * INVERSE_BASIS_POINT;
-        calculateElo(m.playerB.addr, expectedScore, scoreplayerB);
+        calculateElo(m.playerB, expectedScore, scoreplayerB);
     }
 
     /**
@@ -95,21 +95,21 @@ contract EloRating is RatingSystem {
         GameLibrary.Sig memory pAsig,
         GameLibrary.Sig memory pBsig
     ) public override returns (bytes32 hash) {
-        hash = GameLibrary.requireValidMatch(m, pAsig, pBsig);
+        hash = GameLibrary._requireValidMatch(m, pAsig, pBsig);
 
         matches[hash].state = MatchState.RUNNING;
         // Update nonces WIP
         require(
-            m.playerA.nonce == playerElo[m.playerA.addr].nonce++,
+            m.nonceA == playerElo[m.playerA].nonce++,
             "pB nonce doesn't match"
         );
         require(
-            m.playerB.nonce == playerElo[m.playerB.addr].nonce++,
+            m.nonceB == playerElo[m.playerB].nonce++,
             "pB nonce doesn't match"
         );
 
         // Emit events
-        emit MatchCreate(m.playerA.addr, m.playerB.addr, m.timestamp);
+        emit MatchCreate(m.playerA, m.playerB, m.timestamp);
     }
 
     function updatePlayerRating(address p, int256 newEloRating) internal {

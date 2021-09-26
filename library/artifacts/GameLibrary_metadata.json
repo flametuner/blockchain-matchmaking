@@ -1,0 +1,348 @@
+{
+	"compiler": {
+		"version": "0.8.7+commit.e28d00a7"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [
+					{
+						"internalType": "bytes32",
+						"name": "hash",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "bytes32",
+						"name": "r",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "bytes32",
+						"name": "s",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "uint8",
+						"name": "v",
+						"type": "uint8"
+					}
+				],
+				"name": "_abcd",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "pure",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"components": [
+							{
+								"internalType": "address",
+								"name": "playerA",
+								"type": "address"
+							},
+							{
+								"internalType": "uint256",
+								"name": "nonceA",
+								"type": "uint256"
+							},
+							{
+								"internalType": "address",
+								"name": "playerB",
+								"type": "address"
+							},
+							{
+								"internalType": "uint256",
+								"name": "nonceB",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "timestamp",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct GameLibrary.Match",
+						"name": "m",
+						"type": "tuple"
+					}
+				],
+				"name": "_hashMatch",
+				"outputs": [
+					{
+						"internalType": "bytes32",
+						"name": "",
+						"type": "bytes32"
+					}
+				],
+				"stateMutability": "pure",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"components": [
+							{
+								"internalType": "address",
+								"name": "playerA",
+								"type": "address"
+							},
+							{
+								"internalType": "uint256",
+								"name": "nonceA",
+								"type": "uint256"
+							},
+							{
+								"internalType": "address",
+								"name": "playerB",
+								"type": "address"
+							},
+							{
+								"internalType": "uint256",
+								"name": "nonceB",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "timestamp",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct GameLibrary.Match",
+						"name": "m",
+						"type": "tuple"
+					},
+					{
+						"internalType": "bytes32",
+						"name": "hash",
+						"type": "bytes32"
+					},
+					{
+						"components": [
+							{
+								"internalType": "uint8",
+								"name": "v",
+								"type": "uint8"
+							},
+							{
+								"internalType": "bytes32",
+								"name": "r",
+								"type": "bytes32"
+							},
+							{
+								"internalType": "bytes32",
+								"name": "s",
+								"type": "bytes32"
+							}
+						],
+						"internalType": "struct GameLibrary.Sig",
+						"name": "sigpA",
+						"type": "tuple"
+					},
+					{
+						"components": [
+							{
+								"internalType": "uint8",
+								"name": "v",
+								"type": "uint8"
+							},
+							{
+								"internalType": "bytes32",
+								"name": "r",
+								"type": "bytes32"
+							},
+							{
+								"internalType": "bytes32",
+								"name": "s",
+								"type": "bytes32"
+							}
+						],
+						"internalType": "struct GameLibrary.Sig",
+						"name": "sigpB",
+						"type": "tuple"
+					}
+				],
+				"name": "_validateMatch",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "pure",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "pA",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "nonceA",
+						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "pB",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "nonceB",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "timestamp",
+						"type": "uint256"
+					}
+				],
+				"name": "hashMatch",
+				"outputs": [
+					{
+						"internalType": "bytes32",
+						"name": "",
+						"type": "bytes32"
+					}
+				],
+				"stateMutability": "pure",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "bytes32",
+						"name": "hash",
+						"type": "bytes32"
+					}
+				],
+				"name": "hashToSign",
+				"outputs": [
+					{
+						"internalType": "bytes32",
+						"name": "",
+						"type": "bytes32"
+					}
+				],
+				"stateMutability": "pure",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "pA",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "nonceA",
+						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "pB",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "nonceB",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "timestamp",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint8",
+						"name": "vA",
+						"type": "uint8"
+					},
+					{
+						"internalType": "bytes32",
+						"name": "rA",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "bytes32",
+						"name": "sA",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "uint8",
+						"name": "vB",
+						"type": "uint8"
+					},
+					{
+						"internalType": "bytes32",
+						"name": "rB",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "bytes32",
+						"name": "sB",
+						"type": "bytes32"
+					}
+				],
+				"name": "validateMatch",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "pure",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"library/GameLibrary.sol": "GameLibrary"
+		},
+		"evmVersion": "london",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"library/GameLibrary.sol": {
+			"keccak256": "0x91e50cacad26139876bcf05b7871bb6cc61dfa0fe16c555b2f59c994813b1416",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://21c2b4786a5773717560399168a91fac5ded03f6232decd3c3d0e26c4acf845c",
+				"dweb:/ipfs/QmYafT2opWy5Wbw9WUGiYWbsrqkeRCEDs5VHX5ABUtGBp5"
+			]
+		}
+	},
+	"version": 1
+}

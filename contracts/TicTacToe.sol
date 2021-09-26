@@ -81,8 +81,8 @@ contract TicTacToe is Ownable {
         bytes32 _gameId = _system.createMatch(m, pAsig, pBsig);
         Game memory game;
         game.playerTurn = Players.PlayerA;
-        game.playerA = m.playerA.addr;
-        game.playerB = m.playerB.addr;
+        game.playerA = m.playerA;
+        game.playerB = m.playerB;
         game.timestamp = m.timestamp;
 
         games[_gameId] = game;

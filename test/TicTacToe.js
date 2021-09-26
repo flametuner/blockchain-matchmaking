@@ -33,16 +33,6 @@ contract("TicTacToe", async (accounts) => {
 
             const hash = signHelper.hashMatch(match);
 
-
-
-            const hashToSign = signHelper.hashToSign(hash);
-
-            const contractHash = (await eloRating.hashMatch(match)).valueOf();
-            assert.equal(hash, contractHash);
-
-            const contractHashToSign = (await eloRating.hashToSign(hash)).valueOf();
-            assert.equal(hash, contractHash);
-
             const sigpA = await signHelper.generateSignature(hash, creator);
             const sigpB = await signHelper.generateSignature(hash, challenged);
             console.log({hash, creator, challenged})
