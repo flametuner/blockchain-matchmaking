@@ -96,9 +96,9 @@ contract EloRating is RatingSystem {
         GameLibrary.Sig memory pBsig
     ) public override returns (bytes32 hash) {
         hash = GameLibrary._requireValidMatch(m, pAsig, pBsig);
-
+        require(matches[hash].state == MatchState.NOT_STARTED);
         matches[hash].state = MatchState.RUNNING;
-        // Update nonces WIP
+        Update nonces WIP
         require(
             m.nonceA == playerElo[m.playerA].nonce++,
             "pB nonce doesn't match"

@@ -8,6 +8,17 @@ function generateRandomMatch(pA, pB) {
     }
 }
 
+function generateMatchWithNonces(pA, nonceA, pB, nonceB) {
+    return {
+        playerA: pA,
+        nonceA: nonceA,
+        playerB: pB,
+        nonceB: nonceB,
+        timestamp: Math.floor(new Date().getTime() / 1000)
+    }
+}
+
 module.exports = {
-    generateRandomMatch
+    generateRandomMatch,
+    generateMatchWithNonces
 }
