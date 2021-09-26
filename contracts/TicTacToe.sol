@@ -44,7 +44,7 @@ contract TicTacToe is Ownable {
     // Games that are already over as well as games that are still running.
     // It is possible to iterate over all games, as the keys of the mapping
     // are known to be the integers from `1` to `nrOfGames`.
-    mapping(bytes32 => Game) private games;
+    mapping(bytes32 => Game) public games;
     // nrOfGames stores the total number of games in this contract.
 
     RatingSystem public _system;
@@ -79,13 +79,12 @@ contract TicTacToe is Ownable {
     ) public returns (bytes32 gameId) {
         require(address(_system) != address(0), "rating system not defined");
         bytes32 _gameId = _system.createMatch(m, pAsig, pBsig);
-        Game memory game;
+        Game storage game = games[_gameId];
         game.playerTurn = Players.PlayerA;
         game.playerA = m.playerA;
         game.playerB = m.playerB;
         game.nonce = m.nonce;
 
-        games[_gameId] = game;
 
         emit GameCreated(_gameId, msg.sender);
         emit PlayerJoinedGame(_gameId, game.playerA, uint8(Players.PlayerA));
@@ -96,7 +95,6 @@ contract TicTacToe is Ownable {
     // makeMove inserts a player on the game board.
     // The player is identified as the sender of the message.
     function makeMove(
-        GameLibrary.Match memory m,
         bytes32 _gameId,
         uint256 _xCoordinate,
         uint256 _yCoordinate
@@ -142,7 +140,7 @@ contract TicTacToe is Ownable {
                 result = GameLibrary.MatchResult.PLAYER_B_WIN;
             }
 
-            _system.writeMatchResult(m, result);
+            _system.writeMatchResult(GameLibrary.Match(game.playerA, game.playerB, game.nonce), result);
             return (true, "The game is over.");
         }
 

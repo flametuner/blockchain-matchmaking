@@ -34,7 +34,7 @@ contract("TicTacToe", async (accounts) => {
     context("Game moves", function () {
         let gameContract;
         let eloRating;
-        let hash;
+        let gameId;
         before(async () => {
             gameContract = await TicTacToe.deployed();
             eloRating = await EloRating.deployed();
@@ -42,17 +42,18 @@ contract("TicTacToe", async (accounts) => {
             const pB = accounts[1];
 
             const match = generator.generateMatch(pA, pB);
-            hash = signHelper.hashMatch(match);
+            const hash = signHelper.hashMatch(match);
             const sigpA = await signHelper.generateSignature(hash, pA);
             const sigpB = await signHelper.generateSignature(hash, pB);
-            await gameContract.newGame(match, sigpA, sigpB, { from: pA });
+            gameId = await gameContract.newGame.call(match, sigpA, sigpB, { from: pA });
+            console.log(gameId);
         });
 
         it("Player A should make a move", async () => {
             const pA = accounts[0];
             // const pB = accounts[1];
-            const tx = await gameContract.makeMove(hash, 0, 0, { from: pA });
-
+            const tx = await gameContract.makeMove(gameId, 0, 0, { from: pA });
+            console.log(tx)
             truffleAssert.eventEmitted(tx, 'PlayerMadeMove', (ev) =>
                 ev.player === pA
             );
