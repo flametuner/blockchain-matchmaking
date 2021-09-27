@@ -1,0 +1,524 @@
+{
+	"compiler": {
+		"version": "0.8.7+commit.e28d00a7"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "addr",
+						"type": "address"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "constructor"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "player",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "elo",
+						"type": "uint256"
+					}
+				],
+				"name": "EloUpdate",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "newKFactor",
+						"type": "uint256"
+					}
+				],
+				"name": "KFactorUpdate",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "pA",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "pB",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "nonce",
+						"type": "uint256"
+					}
+				],
+				"name": "MatchCreate",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "pA",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "pB",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "nonce",
+						"type": "uint256"
+					}
+				],
+				"name": "MatchFinish",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "previousOwner",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "newOwner",
+						"type": "address"
+					}
+				],
+				"name": "OwnershipTransferred",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "newEvaluationPeriod",
+						"type": "uint256"
+					}
+				],
+				"name": "PeriodCompleted",
+				"type": "event"
+			},
+			{
+				"inputs": [],
+				"name": "DRAW",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "INVERSE_BASIS_POINT",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "VICTORY",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "newGameAddress",
+						"type": "address"
+					}
+				],
+				"name": "alterGameContract",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"components": [
+							{
+								"internalType": "address",
+								"name": "playerA",
+								"type": "address"
+							},
+							{
+								"internalType": "address",
+								"name": "playerB",
+								"type": "address"
+							},
+							{
+								"internalType": "uint256",
+								"name": "nonce",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct GameLibrary.Match",
+						"name": "m",
+						"type": "tuple"
+					},
+					{
+						"components": [
+							{
+								"internalType": "uint8",
+								"name": "v",
+								"type": "uint8"
+							},
+							{
+								"internalType": "bytes32",
+								"name": "r",
+								"type": "bytes32"
+							},
+							{
+								"internalType": "bytes32",
+								"name": "s",
+								"type": "bytes32"
+							}
+						],
+						"internalType": "struct GameLibrary.Sig",
+						"name": "pAsig",
+						"type": "tuple"
+					},
+					{
+						"components": [
+							{
+								"internalType": "uint8",
+								"name": "v",
+								"type": "uint8"
+							},
+							{
+								"internalType": "bytes32",
+								"name": "r",
+								"type": "bytes32"
+							},
+							{
+								"internalType": "bytes32",
+								"name": "s",
+								"type": "bytes32"
+							}
+						],
+						"internalType": "struct GameLibrary.Sig",
+						"name": "pBsig",
+						"type": "tuple"
+					}
+				],
+				"name": "createMatch",
+				"outputs": [
+					{
+						"internalType": "bytes32",
+						"name": "hash",
+						"type": "bytes32"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "currentEvaluationPeriod",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "evaluationPeriod",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "p",
+						"type": "address"
+					}
+				],
+				"name": "getPlayerRating",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "elo",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "kFactor",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "nextEvaluationPeriod",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "owner",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "renounceOwnership",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "newOwner",
+						"type": "address"
+					}
+				],
+				"name": "transferOwnership",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "newEvaluationPeriod",
+						"type": "uint256"
+					}
+				],
+				"name": "updateEvaluationPeriod",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "newKFactor",
+						"type": "uint256"
+					}
+				],
+				"name": "updateKFactor",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"components": [
+							{
+								"internalType": "address",
+								"name": "playerA",
+								"type": "address"
+							},
+							{
+								"internalType": "address",
+								"name": "playerB",
+								"type": "address"
+							},
+							{
+								"internalType": "uint256",
+								"name": "nonce",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct GameLibrary.Match",
+						"name": "m",
+						"type": "tuple"
+					},
+					{
+						"internalType": "enum GameLibrary.MatchResult",
+						"name": "result",
+						"type": "uint8"
+					}
+				],
+				"name": "writeMatchResult",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {
+				"owner()": {
+					"details": "Returns the address of the current owner."
+				},
+				"renounceOwnership()": {
+					"details": "Leaves the contract without owner. It will not be possible to call `onlyOwner` functions anymore. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby removing any functionality that is only available to the owner."
+				},
+				"transferOwnership(address)": {
+					"details": "Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner."
+				}
+			},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {
+				"updateKFactor(uint256)": {
+					"notice": "Update k factor for Elo Rating"
+				}
+			},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"contracts/EloRating.sol": "EloRating"
+		},
+		"evmVersion": "london",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"@openzeppelin/contracts/access/Ownable.sol": {
+			"keccak256": "0x6bb804a310218875e89d12c053e94a13a4607cdf7cc2052f3e52bd32a0dc50a1",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://b2ebbbe6d0011175bd9e7268b83de3f9c2f9d8d4cbfbaef12aff977d7d727163",
+				"dweb:/ipfs/Qmd5c7Vxtis9wzkDNhxwc6A2QT5H9xn9kfjhx7qx44vpro"
+			]
+		},
+		"@openzeppelin/contracts/utils/Context.sol": {
+			"keccak256": "0x90565a39ae45c80f0468dc96c7b20d0afc3055f344c8203a0c9258239f350b9f",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://26e8b38a7ac8e7b4463af00cf7fff1bf48ae9875765bf4f7751e100124d0bc8c",
+				"dweb:/ipfs/QmWcsmkVr24xmmjfnBQZoemFniXjj3vwT78Cz6uqZW1Hux"
+			]
+		},
+		"contracts/EloRating.sol": {
+			"keccak256": "0x236eeca0b52b568283ffb1a7a45a55e5c32acc9af601d46fecdb3d32f719c3eb",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://d857e16eebd86c696a9e1f62573a944eacdeb89719b3ff92ffa3336e2990c254",
+				"dweb:/ipfs/QmUAtWpMS4JfirrbMyb9chhz8Pusope1DeFncNguMQ9nr1"
+			]
+		},
+		"contracts/RatingSystem.sol": {
+			"keccak256": "0x292ca5954f009da2014d62ba62469453705c0f2e539aef4a1c01b310385694f1",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://7500759596b7f8b970cecff86935c43b4468eb49dc5e7b0c04d9fa7c29073201",
+				"dweb:/ipfs/QmVjoMkzjPkxFW1mweXyefR5kCwwrxMaMFBdjm4kcyNWap"
+			]
+		},
+		"interfaces/IPeriodic.sol": {
+			"keccak256": "0x9dca8e50ff591f7f5096dc845bf8c419cd70173d412f35b3d77c232fb09d074a",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://5a5378793b1e6ac00e54c83a177e35c1619926fe259e6d080e9f7a303ff78847",
+				"dweb:/ipfs/QmX7KpigcT3pBA5sJ4o5PM3VsLt5jh9GYfv2cTfShYADHe"
+			]
+		},
+		"interfaces/IRating.sol": {
+			"keccak256": "0x38f9ff0510711cb00267cec4fe062d38258c0c611a6b10c8eeb1187cb2a0a149",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://d1043521861a39b5368d659c87e9781b3f2e56bcadb8ef4f8cbc8066ace4a823",
+				"dweb:/ipfs/QmeXE5F9BkvcH1N8Si6Hk6vFrtrqcBjgwgmK6TaDHzK3xp"
+			]
+		},
+		"library/GameLibrary.sol": {
+			"keccak256": "0x57fbcf5ac007fae7d1330454fd7ad0dc02623d7b58b368f95e8f86f79628e13a",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://7d2e6cd1927efe7d20169ea5649ba2216635394c201c1ccb1c36360bae858524",
+				"dweb:/ipfs/QmYL49EeyN9DGZTnUYGYGiE1faLCE9jboAwFV6Puk92Kkw"
+			]
+		}
+	},
+	"version": 1
+}

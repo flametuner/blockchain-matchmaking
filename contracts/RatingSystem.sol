@@ -14,19 +14,19 @@ abstract contract RatingSystem is Ownable, IRating, IPeriodic {
 
     uint256 public currentEvaluationPeriod;
 
-    mapping(bytes32 => RunningMatch) matches;
+    mapping(bytes32 => RunningMatch) public matches;
 
     event PeriodCompleted(uint256 newEvaluationPeriod);
 
     event MatchCreate(
         address indexed pA,
         address indexed pB,
-        uint256 timestamp
+        uint256 nonce
     );
     event MatchFinish(
         address indexed pA,
         address indexed pB,
-        uint256 timestamp
+        uint256 nonce
     );
 
     struct RunningMatch {
@@ -86,67 +86,4 @@ abstract contract RatingSystem is Ownable, IRating, IPeriodic {
         GameLibrary.Match memory m,
         GameLibrary.MatchResult result
     ) public virtual override onlyGameContract {}
-
-    function requireValidMatch(
-        GameLibrary.Match memory m,
-        GameLibrary.Sig memory sigpA,
-        GameLibrary.Sig memory sigpB
-    ) internal pure returns (bytes32 hash) {
-        require(
-            validateMatch(m, hash = hashToSignMatch(m), sigpA, sigpB),
-            "invalid match"
-        );
-    }
-
-    function validateMatch(
-        GameLibrary.Match memory m,
-        bytes32 hash,
-        GameLibrary.Sig memory sigpA,
-        GameLibrary.Sig memory sigpB
-    ) internal pure returns (bool) {
-        // require(
-        //     ecrecover(hash, sigpB.v, sigpB.r, sigpB.s) == m.playerB.addr,
-        //     "sig B not correct"
-        // );
-        // require(
-        //     ecrecover(hash, sigpA.v, sigpA.r, sigpA.s) == m.playerA.addr,
-        //     "sig A not correct"
-        // );
-        
-
-        return 
-            ecrecover(hash, sigpA.v, sigpA.r, sigpA.s) == m.playerA.addr &&
-            ecrecover(hash, sigpB.v, sigpB.r, sigpB.s) == m.playerB.addr;
-    }
-
-    function hashToSignMatch(GameLibrary.Match memory m)
-        internal
-        pure
-        returns (bytes32)
-    {
-        return hashToSign(hashMatch(m));
-    }
-
-    function hashMatch(GameLibrary.Match memory m)
-        public
-        pure
-        returns (bytes32 hash)
-    {
-        hash = keccak256(
-            abi.encodePacked(
-                m.playerA.addr,
-                m.playerA.nonce,
-                m.playerB.addr,
-                m.playerB.nonce,
-                m.timestamp
-            )
-        );
-    }
-
-    function hashToSign(bytes32 hash) public pure returns (bytes32) {
-        return
-            keccak256(
-                abi.encodePacked("\x19Ethereum Signed Message:\n32", hash)
-            );
-    }
 }

@@ -1,64 +1,80 @@
 const truffleAssert = require('truffle-assertions');
 const TicTacToe = artifacts.require("TicTacToe");
-const EloRating = artifacts.require("EloRating");
 const signHelper = require("./helpers/signatureHelper");
-
+const generator = require("./helpers/generators");
 
 contract("TicTacToe", async (accounts) => {
-    context("Normal flow", function () {
+    context("Game creation", function () {
         let gameContract;
-        let eloRating;
         before(async () => {
             gameContract = await TicTacToe.deployed();
-            eloRating = await EloRating.deployed();
         });
 
         it("Should create a new game", async () => {
-            const creator = accounts[0];
-            const challenged = accounts[1];
-            const creatorNonce = (await eloRating.getPlayerNonce(creator)).valueOf();
-            const challengedNonce = (await eloRating.getPlayerNonce(challenged)).valueOf();
+            const pA = accounts[0];
+            const pB = accounts[1];
 
-            const match = {
-                playerA: {
-                    addr: creator,
-                    nonce: creatorNonce
-                },
-                playerB: {
-                    addr: challenged,
-                    nonce: challengedNonce
-                },
-                timestamp: Math.floor(new Date().getTime() / 1000)
-            }
-
+            const match = generator.generateMatch(pA, pB);
             const hash = signHelper.hashMatch(match);
+            const sigpA = await signHelper.generateSignature(hash, pA);
+            const sigpB = await signHelper.generateSignature(hash, pB);
 
+            const tx = await gameContract.newGame(match, sigpA, sigpB, { from: pA });
 
-
-            const hashToSign = signHelper.hashToSign(hash);
-
-            const contractHash = (await eloRating.hashMatch(match)).valueOf();
-            assert.equal(hash, contractHash);
-
-            const contractHashToSign = (await eloRating.hashToSign(hash)).valueOf();
-            assert.equal(hash, contractHash);
-
-            const sigpA = await signHelper.generateSignature(hash, creator);
-            const sigpB = await signHelper.generateSignature(hash, challenged);
-            console.log({hash, creator, challenged})
-
-            const tx = await gameContract.newGame(match, sigpA, sigpB, { from: creator });
-
-            truffleAssert.eventEmitted(tx, 'GameCreated', (ev) => ev.creator === creator)
+            truffleAssert.eventEmitted(tx, 'GameCreated', (ev) => ev.creator === pA)
         });
-        // it("Should join the game", async () => {
-        //     const creator = accounts[0];
-        //     const tx = await gameContract.newGame({ from: creator });
 
-        //     truffleAssert.eventEmitted(tx, 'GameCreated', (ev) =>
-        //         ev.creator === creator
-        //     )
-        // });
         // https://www.trufflesuite.com/docs/truffle/reference/truffle-commands
+    });
+    context("Game moves", function () {
+        const pA = accounts[0];
+        const pB = accounts[1];
+        let gameContract;
+        let gameId;
+
+        before(async () => {
+            gameContract = await TicTacToe.deployed();
+
+            const match = generator.generateMatch(pA, pB);
+            const hash = signHelper.hashMatch(match);
+            gameId = signHelper.hashToSign(hash);
+            const sigpA = await signHelper.generateSignature(hash, pA);
+            const sigpB = await signHelper.generateSignature(hash, pB);
+            await gameContract.newGame(match, sigpA, sigpB, { from: pA });
+        });
+
+        it("Player A should make a move", async () => {
+            const tx = await gameContract.makeMove(gameId, 0, 0, { from: pA });
+
+            truffleAssert.eventEmitted(tx, 'PlayerMadeMove', (ev) =>
+                ev.player === pA
+            );
+        });
+
+        it("Player A should not make a move", async () => {
+            const tx = await gameContract.makeMove.call(gameId, 0, 1, { from: pA });
+
+            assert.equal(tx.reason, "It is not your turn.");
+        });
+        it("Player B should make a move", async () => {
+            const tx = await gameContract.makeMove(gameId, 0, 1, { from: pB });
+            truffleAssert.eventEmitted(tx, 'PlayerMadeMove', (ev) =>
+                ev.player === pB
+            );
+        });
+        it("Player should not use existing coords", async () => {
+            const tx = await gameContract.makeMove.call(gameId, 0, 0, { from: pA });
+            assert.equal(tx.reason, "There is already a mark at the given coordinates.");
+        });
+        it("Player B should win", async () => {
+            await gameContract.makeMove(gameId, 1, 0, { from: pA });
+            await gameContract.makeMove(gameId, 1, 1, { from: pB });
+            await gameContract.makeMove(gameId, 0, 2, { from: pA });
+            const tx = await gameContract.makeMove(gameId, 2, 1, { from: pB });
+
+            truffleAssert.eventEmitted(tx, 'GameOver', (ev) =>
+                ev.winner == 2 // Player B
+            );
+        });
     });
 })
