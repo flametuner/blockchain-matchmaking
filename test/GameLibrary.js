@@ -44,6 +44,7 @@ contract('GameLibrary', async (accounts) => {
             const hashToSign = signHelper.hashToSign(hash);
 
             const sigpA = await signHelper.generateSignature(hash, pA);
+            
             const sigAddrA = (await library._ecrecover(hashToSign, sigpA.v, sigpA.r, sigpA.s)).valueOf();
 
             assert.equal(sigAddrA, pA);
@@ -52,7 +53,6 @@ contract('GameLibrary', async (accounts) => {
             const sigAddrB = (await library._ecrecover(hashToSign, sigpB.v, sigpB.r, sigpB.s)).valueOf();
 
             assert.equal(sigAddrB, pB);
-
             const valid = (await library.validateMatch(
                 match.playerA, match.playerB, match.nonce,
                 sigpA.v, sigpA.r, sigpA.s,

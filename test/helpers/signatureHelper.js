@@ -2,7 +2,6 @@ const util = require('ethereumjs-util')
 
 async function generateSignature(hash, address) {
     let sig = await web3.eth.sign(hash, address);
-
     const res = util.fromRpcSig(sig);
     return res;
 }

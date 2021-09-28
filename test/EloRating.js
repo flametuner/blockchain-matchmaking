@@ -40,16 +40,16 @@ contract("EloRating", async (accounts) => {
 
             const eloBeforeA = (await eloRating.getPlayerRating.call(pA));
             const eloBeforeB = (await eloRating.getPlayerRating.call(pB));
-            console.log({eloBeforeA, eloBeforeB});
+
             await gameContract.makeMove(gameId, 0, 0, { from: pA });
             await gameContract.makeMove(gameId, 0, 1, { from: pB });
             await gameContract.makeMove(gameId, 1, 0, { from: pA });
             await gameContract.makeMove(gameId, 1, 1, { from: pB });
-            const win = await gameContract.makeMove(gameId, 2, 0, { from: pA });
-            console.log(win)
+            await gameContract.makeMove(gameId, 2, 0, { from: pA });
+
             const eloAfterA = (await eloRating.getPlayerRating.call(pA));
             const eloAfterB = (await eloRating.getPlayerRating.call(pB));
-            console.log({eloAfterA, eloAfterB});
+
             assert.equal(eloAfterA > eloBeforeA, true); // Player A won
             assert.equal(eloAfterB < eloBeforeB, true); // Player B lost
         });
