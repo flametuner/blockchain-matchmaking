@@ -22,6 +22,9 @@
 //
 // const fs = require('fs');
 // const mnemonic = fs.readFileSync(".secret").toString().trim();
+require('dotenv').config()
+var HDWalletProvider = require("truffle-hdwallet-provider");
+var mnemonic = process.env.SEED;
 
 module.exports = {
   /**
@@ -42,10 +45,18 @@ module.exports = {
     // options below to some value.
     //
     development: {
-     host: "127.0.0.1",     // Localhost (default: none)
-     port: 9545,            // Standard Ethereum port (default: none)
-     network_id: "*",       // Any network (default: none)
+      host: "127.0.0.1",     // Localhost (default: none)
+      port: 9545,            // Standard Ethereum port (default: none)
+      network_id: "*",       // Any network (default: none)
     },
+    rinkeby: {
+      provider: function () {
+        return new HDWalletProvider(mnemonic, `https://rinkeby.infura.io/v3/${process.env.INFURA_PROJECT_ID}`);
+      },
+      network_id: 4,
+      gas: 4500000,
+      gasPrice: 10000000000,
+    }
     // Another network with more advanced options...
     // advanced: {
     // port: 8777,             // Custom port
@@ -104,13 +115,13 @@ module.exports = {
   // $ truffle migrate --reset --compile-all
   //
   // db: {
-    // enabled: false,
-    // host: "127.0.0.1",
-    // adapter: {
-    //   name: "sqlite",
-    //   settings: {
-    //     directory: ".db"
-    //   }
-    // }
+  // enabled: false,
+  // host: "127.0.0.1",
+  // adapter: {
+  //   name: "sqlite",
+  //   settings: {
+  //     directory: ".db"
+  //   }
+  // }
   // }
 };
