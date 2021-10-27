@@ -50,21 +50,25 @@ contract TicTacToe is Ownable {
     RatingSystem public _system;
 
     // GameCreated signals that `creator` created a new game with this `gameId`.
-    event GameCreated(bytes32 gameId, address creator);
+    event GameCreated(bytes32 indexed gameId, address creator);
     // PlayerJoinedGame signals that `player` joined the game with the id `gameId`.
     // That player has the player number `playerNumber` in that game.
-    event PlayerJoinedGame(bytes32 gameId, address player, uint8 playerNumber);
+    event PlayerJoinedGame(
+        bytes32 indexed gameId,
+        address player,
+        uint8 playerNumber
+    );
     // PlayerMadeMove signals that `player` filled in the board of the game with
     // the id `gameId`. She did so at the coordinates `xCoordinate`, `yCoordinate`.
     event PlayerMadeMove(
-        bytes32 gameId,
+        bytes32 indexed gameId,
         address player,
         uint256 xCoordinate,
         uint256 yCoordinate
     );
     // GameOver signals that the game with the id `gameId` is over.
     // The winner is indicated by `winner`. No more moves are allowed in this game.
-    event GameOver(bytes32 gameId, Winners winner);
+    event GameOver(bytes32 indexed gameId, Winners winner);
 
     function updateRatingSystem(RatingSystem system) public onlyOwner {
         _system = system;
@@ -84,7 +88,6 @@ contract TicTacToe is Ownable {
         game.playerA = m.playerA;
         game.playerB = m.playerB;
         game.nonce = m.nonce;
-
 
         emit GameCreated(_gameId, msg.sender);
         emit PlayerJoinedGame(_gameId, game.playerA, uint8(Players.PlayerA));
@@ -140,7 +143,10 @@ contract TicTacToe is Ownable {
                 result = GameLibrary.MatchResult.PLAYER_B_WIN;
             }
 
-            _system.writeMatchResult(GameLibrary.Match(game.playerA, game.playerB, game.nonce), result);
+            _system.writeMatchResult(
+                GameLibrary.Match(game.playerA, game.playerB, game.nonce),
+                result
+            );
             return (true, "The game is over.");
         }
 
@@ -149,6 +155,15 @@ contract TicTacToe is Ownable {
         nextPlayer(game);
 
         return (true, "");
+    }
+
+    function getGameBoard(bytes32 gameId)
+        public
+        view
+        returns (Players[3][3] memory board)
+    {
+        Game storage game = games[gameId];
+        return game.board;
     }
 
     // getCurrentPlayer returns the address of the player that should make the next move.

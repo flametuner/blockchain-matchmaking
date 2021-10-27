@@ -27,25 +27,31 @@
 					},
 					{
 						"indexed": false,
-						"internalType": "uint256",
+						"internalType": "int256",
 						"name": "elo",
-						"type": "uint256"
+						"type": "int256"
 					}
 				],
-				"name": "EloUpdate",
+				"name": "EloChange",
 				"type": "event"
 			},
 			{
 				"anonymous": false,
 				"inputs": [
 					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "player",
+						"type": "address"
+					},
+					{
 						"indexed": false,
-						"internalType": "uint256",
-						"name": "newKFactor",
-						"type": "uint256"
+						"internalType": "int256",
+						"name": "elo",
+						"type": "int256"
 					}
 				],
-				"name": "KFactorUpdate",
+				"name": "EloUpdate",
 				"type": "event"
 			},
 			{
@@ -135,9 +141,9 @@
 				"name": "DRAW",
 				"outputs": [
 					{
-						"internalType": "uint256",
+						"internalType": "int256",
 						"name": "",
-						"type": "uint256"
+						"type": "int256"
 					}
 				],
 				"stateMutability": "view",
@@ -161,9 +167,9 @@
 				"name": "VICTORY",
 				"outputs": [
 					{
-						"internalType": "uint256",
+						"internalType": "int256",
 						"name": "",
-						"type": "uint256"
+						"type": "int256"
 					}
 				],
 				"stateMutability": "view",
@@ -299,9 +305,9 @@
 				"name": "getPlayerRating",
 				"outputs": [
 					{
-						"internalType": "uint256",
+						"internalType": "int256",
 						"name": "elo",
-						"type": "uint256"
+						"type": "int256"
 					}
 				],
 				"stateMutability": "view",
@@ -312,9 +318,33 @@
 				"name": "kFactor",
 				"outputs": [
 					{
-						"internalType": "uint256",
+						"internalType": "int256",
 						"name": "",
-						"type": "uint256"
+						"type": "int256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "bytes32",
+						"name": "",
+						"type": "bytes32"
+					}
+				],
+				"name": "matches",
+				"outputs": [
+					{
+						"internalType": "enum RatingSystem.MatchState",
+						"name": "state",
+						"type": "uint8"
+					},
+					{
+						"internalType": "address",
+						"name": "winner",
+						"type": "address"
 					}
 				],
 				"stateMutability": "view",
@@ -376,19 +406,6 @@
 			{
 				"inputs": [
 					{
-						"internalType": "uint256",
-						"name": "newKFactor",
-						"type": "uint256"
-					}
-				],
-				"name": "updateKFactor",
-				"outputs": [],
-				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
 						"components": [
 							{
 								"internalType": "address",
@@ -440,7 +457,7 @@
 		"userdoc": {
 			"kind": "user",
 			"methods": {
-				"updateKFactor(uint256)": {
+				"writeMatchResult((address,address,uint256),uint8)": {
 					"notice": "Update k factor for Elo Rating"
 				}
 			},
@@ -480,19 +497,19 @@
 			]
 		},
 		"contracts/EloRating.sol": {
-			"keccak256": "0x236eeca0b52b568283ffb1a7a45a55e5c32acc9af601d46fecdb3d32f719c3eb",
+			"keccak256": "0x15c9c3bb00f701aee82249a0c81820ba6875d8da73ec08e9a5bcb6496ca17bd2",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://d857e16eebd86c696a9e1f62573a944eacdeb89719b3ff92ffa3336e2990c254",
-				"dweb:/ipfs/QmUAtWpMS4JfirrbMyb9chhz8Pusope1DeFncNguMQ9nr1"
+				"bzz-raw://b792c97e1677b1e5cc081b7d16de1a3c02a10ca963c96e28d24194a992c18c38",
+				"dweb:/ipfs/QmWucy38YW94Yf19F1eqFwhC2StTgo1oEwV38RLHjhye2u"
 			]
 		},
 		"contracts/RatingSystem.sol": {
-			"keccak256": "0x292ca5954f009da2014d62ba62469453705c0f2e539aef4a1c01b310385694f1",
+			"keccak256": "0x857acc2af7cc28af03cfacbf53ac3e5297765129d1d3f0bfd4414d0ec95ecac4",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://7500759596b7f8b970cecff86935c43b4468eb49dc5e7b0c04d9fa7c29073201",
-				"dweb:/ipfs/QmVjoMkzjPkxFW1mweXyefR5kCwwrxMaMFBdjm4kcyNWap"
+				"bzz-raw://c6b001f71c4e27658fda360372f2c20857e8a2edf533894bd3ed9b8a9dee4477",
+				"dweb:/ipfs/QmRMZJHWB4qskfp5kMv9XJzBykLZERZwfm4mbQmxdJVDVg"
 			]
 		},
 		"interfaces/IPeriodic.sol": {
@@ -512,11 +529,11 @@
 			]
 		},
 		"library/GameLibrary.sol": {
-			"keccak256": "0x57fbcf5ac007fae7d1330454fd7ad0dc02623d7b58b368f95e8f86f79628e13a",
+			"keccak256": "0xb7ac35ed321e7c57dba35cc0a315b8da398b03654590e6859a2c0e12fe0ebf03",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://7d2e6cd1927efe7d20169ea5649ba2216635394c201c1ccb1c36360bae858524",
-				"dweb:/ipfs/QmYL49EeyN9DGZTnUYGYGiE1faLCE9jboAwFV6Puk92Kkw"
+				"bzz-raw://fe6aafb3995c48e4b06775ef0cdbae575de5e8bca216ef6ed6a906ae77920c44",
+				"dweb:/ipfs/QmRrRRtjNaehFsxVJMuDqB7PvmXR5XdgQXV64e7yz73JKC"
 			]
 		}
 	},

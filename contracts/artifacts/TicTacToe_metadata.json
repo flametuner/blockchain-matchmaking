@@ -135,6 +135,64 @@
 				"inputs": [
 					{
 						"internalType": "bytes32",
+						"name": "",
+						"type": "bytes32"
+					}
+				],
+				"name": "games",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "playerA",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "playerB",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "nonce",
+						"type": "uint256"
+					},
+					{
+						"internalType": "enum TicTacToe.Winners",
+						"name": "winner",
+						"type": "uint8"
+					},
+					{
+						"internalType": "enum TicTacToe.Players",
+						"name": "playerTurn",
+						"type": "uint8"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "bytes32",
+						"name": "gameId",
+						"type": "bytes32"
+					}
+				],
+				"name": "getGameBoard",
+				"outputs": [
+					{
+						"internalType": "enum TicTacToe.Players[3][3]",
+						"name": "board",
+						"type": "uint8[3][3]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "bytes32",
 						"name": "_gameId",
 						"type": "bytes32"
 					},
@@ -346,19 +404,19 @@
 			]
 		},
 		"contracts/RatingSystem.sol": {
-			"keccak256": "0x292ca5954f009da2014d62ba62469453705c0f2e539aef4a1c01b310385694f1",
+			"keccak256": "0x857acc2af7cc28af03cfacbf53ac3e5297765129d1d3f0bfd4414d0ec95ecac4",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://7500759596b7f8b970cecff86935c43b4468eb49dc5e7b0c04d9fa7c29073201",
-				"dweb:/ipfs/QmVjoMkzjPkxFW1mweXyefR5kCwwrxMaMFBdjm4kcyNWap"
+				"bzz-raw://c6b001f71c4e27658fda360372f2c20857e8a2edf533894bd3ed9b8a9dee4477",
+				"dweb:/ipfs/QmRMZJHWB4qskfp5kMv9XJzBykLZERZwfm4mbQmxdJVDVg"
 			]
 		},
 		"contracts/TicTacToe.sol": {
-			"keccak256": "0xf0b3d1fc1382a7775e33e6800afc2b593a12f07739e50d29f733ec2c0efd762c",
+			"keccak256": "0xd0fd0eb121b89034069d8fcd899409c28cf019823b17c08ea627ebb522513c6a",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://15dcf45aa2e710123a9176f25120f86a65d4d86f290bce7686ed161314955b9d",
-				"dweb:/ipfs/QmQpJm51DNK9tr7H3Fqez8ENjZeCHTLd22LeeM1Gsr2aNq"
+				"bzz-raw://52b28533ad68bc6ee2e3c720c6146284e33509da19ff05117c41dc1e45afc2a8",
+				"dweb:/ipfs/QmP2bXWqgJ2h98nBNAYvDvGBxzx1GY8aFKCggNBE4XwWcb"
 			]
 		},
 		"interfaces/IPeriodic.sol": {
@@ -378,11 +436,11 @@
 			]
 		},
 		"library/GameLibrary.sol": {
-			"keccak256": "0x57fbcf5ac007fae7d1330454fd7ad0dc02623d7b58b368f95e8f86f79628e13a",
+			"keccak256": "0xb7ac35ed321e7c57dba35cc0a315b8da398b03654590e6859a2c0e12fe0ebf03",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://7d2e6cd1927efe7d20169ea5649ba2216635394c201c1ccb1c36360bae858524",
-				"dweb:/ipfs/QmYL49EeyN9DGZTnUYGYGiE1faLCE9jboAwFV6Puk92Kkw"
+				"bzz-raw://fe6aafb3995c48e4b06775ef0cdbae575de5e8bca216ef6ed6a906ae77920c44",
+				"dweb:/ipfs/QmRrRRtjNaehFsxVJMuDqB7PvmXR5XdgQXV64e7yz73JKC"
 			]
 		}
 	},
